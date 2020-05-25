@@ -3,6 +3,7 @@ package logger
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 )
 
@@ -41,5 +42,7 @@ func (e httpError) Response(w http.ResponseWriter) {
 	})
 	if err != nil {
 		LogError(err.Error())
+	} else {
+		LogWarning(fmt.Sprintf("status %d occured with message %s", e.Code(), e.Error()))
 	}
 }

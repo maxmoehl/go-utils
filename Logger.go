@@ -62,7 +62,7 @@ func log(message interface{}, severity string) {
 		Severity:    severity,
 	})
 	fmt.Println(string(res))
-	if parsedUrl, err := url.Parse(LogServiceUrl); err == nil {
+	if parsedUrl, err := url.Parse(LogServiceUrl); err == nil && LogServiceUrl != "" {
 		req, _ := http.NewRequest("POST", parsedUrl.String(), bytes.NewReader(res))
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {

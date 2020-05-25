@@ -9,6 +9,7 @@ import (
 type HttpError interface {
 	Error() string
 	Code() int
+	Response(w http.ResponseWriter)
 }
 
 type httpError struct {
@@ -20,6 +21,7 @@ func (e httpError) Code() int {
 	return e.code
 }
 
+// Creates a new HttpError that can be sent back
 func NewHttpError(code int, message string) HttpError {
 	if code < 400 {
 		panic("code below 400 does not indicate an error")
@@ -30,9 +32,13 @@ func NewHttpError(code int, message string) HttpError {
 	}
 }
 
-func ResponseWithHttpError(w http.ResponseWriter, httpErr httpError) {
-	w.WriteHeader(httpErr.Code())
-	err := json.NewEncoder(w).Encode(httpErr)
+// Sends back the current error by using the ResponseWriter that is passed in
+func (e httpError) Response(w http.ResponseWriter) {
+	w.WriteHeader(e.Code())
+	err := json.NewEncoder(w).Encode(map[string]interface{}{
+		"code":    e.Code(),
+		"message": e.Error(),
+	})
 	if err != nil {
 		LogError(err.Error())
 	}

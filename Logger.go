@@ -32,6 +32,8 @@ func GinLoggingMiddleware() gin.HandlerFunc {
 	}
 }
 
+// This can be used by go http servers that are following the standard signature to
+// log some statistics about the requests
 func RouterMiddleWare(inner http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()

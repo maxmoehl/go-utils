@@ -1,7 +1,9 @@
 package logger
 
 import (
+	"encoding/json"
 	"errors"
+	"net/http"
 )
 
 type HttpError interface {
@@ -25,5 +27,13 @@ func NewHttpError(code int, message string) HttpError {
 	return httpError{
 		error: errors.New(message),
 		code:  code,
+	}
+}
+
+func ResponseWithHttpError(w http.ResponseWriter, httpErr httpError) {
+	w.WriteHeader(httpErr.Code())
+	err := json.NewEncoder(w).Encode(httpErr)
+	if err != nil {
+		LogError(err.Error())
 	}
 }

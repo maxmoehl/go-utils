@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
 	"net/url"
@@ -23,14 +22,6 @@ var (
 	application   string
 	LogServiceUrl string
 )
-
-// This function returns a middleware that will write logs to the log service
-func GinLoggingMiddleware() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		log("logger was used", Info)
-		ctx.Next()
-	}
-}
 
 // This can be used by go http servers that are following the standard signature to
 // log some statistics about the requests

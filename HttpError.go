@@ -35,10 +35,13 @@ func NewHttpError(code int, message string) HttpError {
 
 // Sends back the current error by using the ResponseWriter that is passed in
 func (e httpError) Response(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(e.Code())
 	err := json.NewEncoder(w).Encode(map[string]interface{}{
-		"code":    e.Code(),
-		"message": e.Error(),
+		"error": map[string]interface{}{
+			"code":    e.Code(),
+			"message": e.Error(),
+		},
 	})
 	if err != nil {
 		LogError(err.Error())

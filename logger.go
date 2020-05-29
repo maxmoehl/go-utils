@@ -1,5 +1,3 @@
-// This package provides basic types and functions to support
-// the use of github.com/maxmoehl/log-service.
 package logger
 
 import (

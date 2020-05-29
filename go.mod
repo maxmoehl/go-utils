@@ -1,4 +1,4 @@
-module github.com/maxmoehl/go-logger
+module github.com/maxmoehl/go-utils
 
 go 1.14
 

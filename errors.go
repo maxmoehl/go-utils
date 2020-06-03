@@ -54,6 +54,14 @@ func NewHttpError(code int, message string, cause error) HttpError {
 	}
 }
 
+// Creates new Error with a message and a (optional) cause
+func NewError(message string, cause error) Error {
+	return err{
+		message: message,
+		cause:   cause,
+	}
+}
+
 // Sends back the current error by using the ResponseWriter that is passed in
 func (e httpError) Response(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

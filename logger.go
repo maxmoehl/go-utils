@@ -34,16 +34,16 @@ func RouterMiddleWare(inner http.Handler) http.Handler {
 }
 
 type LogMessage struct {
-	Id          uuid.UUID   `json:"_id" bson:"_id"`
-	Severity    string      `json:"_severity" bson:"_severity"`
-	TimeStamp   int64       `json:"_timestamp" bson:"_timestamp"`
-	Application string      `json:"_application" bson:"_application"`
-	Message     interface{} `json:"message" bson:"message"`
+	Id          uuid.UUID   `json:"id" bson:"id"`
+	Severity    string      `json:"severity" bson:"severity"`
+	TimeStamp   int64       `json:"timestamp" bson:"timestamp"`
+	Application string      `json:"application" bson:"application"`
+	Content     interface{} `json:"content" bson:"content"`
 }
 
 // Writes a log to the console but also tries to send the log to a logging server
 // if the LogServiceUrl is set. If the url is not set no data will be sent anywhere.
-func log(message interface{}, severity string) {
+func log(content interface{}, severity string) {
 	if application == "" {
 		panic("application string not set")
 	}
@@ -51,7 +51,7 @@ func log(message interface{}, severity string) {
 		Id:          uuid.New(),
 		TimeStamp:   time.Now().Unix(),
 		Application: application,
-		Message:     message,
+		Content:     content,
 		Severity:    severity,
 	})
 	fmt.Println(string(res))
@@ -67,18 +67,18 @@ func log(message interface{}, severity string) {
 }
 
 // Writes a log entry with an info severity. See log() for more details
-func LogInfo(message string) {
-	log(message, SeverityInfo)
+func LogInfo(content interface{}) {
+	log(content, SeverityInfo)
 }
 
 // Writes a log entry with an warning severity. See log() for more details
-func LogWarning(message string) {
-	log(message, SeverityWarning)
+func LogWarning(content interface{}) {
+	log(content, SeverityWarning)
 }
 
 // Writes a log entry with an error severity. See log() for more details
-func LogError(message string) {
-	log(message, SeverityError)
+func LogError(content interface{}) {
+	log(content, SeverityError)
 }
 
 // Sets the application string. This must be done before any log function is

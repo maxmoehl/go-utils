@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	Info    = "i"
-	Warning = "w"
-	Error   = "e"
+	SeverityInfo    = "i"
+	SeverityWarning = "w"
+	SeverityError   = "e"
 )
 
 var (
@@ -29,7 +29,7 @@ func RouterMiddleWare(inner http.Handler) http.Handler {
 
 		inner.ServeHTTP(w, r)
 
-		log(fmt.Sprintf("%s\t%s\t%s", r.Method, r.RequestURI, time.Since(start)), Info)
+		log(fmt.Sprintf("%s\t%s\t%s", r.Method, r.RequestURI, time.Since(start)), SeverityInfo)
 	})
 }
 
@@ -41,6 +41,8 @@ type LogMessage struct {
 	Message     interface{} `json:"message" bson:"message"`
 }
 
+// Writes a log to the console but also tries to send the log to a logging server
+// if the LogServiceUrl is set. If the url is not set no data will be sent anywhere.
 func log(message interface{}, severity string) {
 	if application == "" {
 		panic("application string not set")
@@ -64,18 +66,24 @@ func log(message interface{}, severity string) {
 	}
 }
 
+// Writes a log entry with an info severity. See log() for more details
 func LogInfo(message string) {
-	log(message, Info)
+	log(message, SeverityInfo)
 }
 
+// Writes a log entry with an warning severity. See log() for more details
 func LogWarning(message string) {
-	log(message, Warning)
+	log(message, SeverityWarning)
 }
 
+// Writes a log entry with an error severity. See log() for more details
 func LogError(message string) {
-	log(message, Error)
+	log(message, SeverityError)
 }
 
+// Sets the application string. This must be done before any log function is
+// called as the application string is part of the log message to see where
+// a log entry came from.
 func SetApplication(newApplication string) {
 	application = newApplication
 }

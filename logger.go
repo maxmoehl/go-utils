@@ -29,7 +29,12 @@ func RouterMiddleWare(inner http.Handler) http.Handler {
 
 		inner.ServeHTTP(w, r)
 
-		log(fmt.Sprintf("%s\t%s\t%s", r.Method, r.RequestURI, time.Since(start)), SeverityInfo)
+		LogInfo(map[string]interface{}{
+			"method":        r.Method,
+			"requestUri":    r.RequestURI,
+			"remoteAddress": r.RemoteAddr,
+			"duration":      time.Since(start),
+		})
 	})
 }
 

@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"time"
 )
@@ -20,6 +21,7 @@ const (
 var (
 	application   string
 	LogServiceUrl string
+	debug         bool
 	loggerInfo    chan interface{}
 	loggerWarn    chan interface{}
 	loggerError   chan interface{}
@@ -41,6 +43,7 @@ type LogMessage struct {
 // For backwards compatibility reasons the old functions
 // will stay the same for now.
 func init() {
+	debug = os.Getenv("LOG_LEVEL") == "DEBUG"
 	loggerInfo = make(chan interface{}, 100)
 	loggerWarn = make(chan interface{}, 100)
 	loggerError = make(chan interface{}, 100)
@@ -98,7 +101,9 @@ func log(content interface{}, severity string) {
 		Content:     content,
 		Severity:    severity,
 	})
-	fmt.Println(string(res))
+	if debug {
+		fmt.Println(string(res))
+	}
 	if parsedUrl, err := url.Parse(LogServiceUrl); err == nil && LogServiceUrl != "" {
 		req, _ := http.NewRequest("POST", parsedUrl.String(), bytes.NewReader(res))
 		resp, err := http.DefaultClient.Do(req)

@@ -20,9 +20,9 @@ const (
 var (
 	application   string
 	LogServiceUrl string
-	LoggerInfo    chan interface{}
-	LoggerWarn    chan interface{}
-	LoggerError   chan interface{}
+	loggerInfo    chan interface{}
+	loggerWarn    chan interface{}
+	loggerError   chan interface{}
 )
 
 type LogMessage struct {
@@ -41,24 +41,30 @@ type LogMessage struct {
 // For backwards compatibility reasons the old functions
 // will stay the same for now.
 func init() {
-	LoggerInfo = make(chan interface{}, 100)
-	LoggerWarn = make(chan interface{}, 100)
-	LoggerError = make(chan interface{}, 100)
+	loggerInfo = make(chan interface{}, 100)
+	loggerWarn = make(chan interface{}, 100)
+	loggerError = make(chan interface{}, 100)
 	go logger()
 }
 
-// This function listens to the three different channels where log messages can be sent
-// by doing so,
+// This function listens to the three different channels where log messages
+// can be sent. When a message is received the
+//
 func logger() {
 	for {
+		var (
+			s string
+			c interface{}
+		)
 		select {
-		case info := <-LoggerInfo:
-			LogInfo(info)
-		case warning := <-LoggerWarn:
-			LogWarning(warning)
-		case err := <-LoggerError:
-			LogError(err)
+		case c = <-loggerInfo:
+			s = SeverityInfo
+		case c = <-loggerWarn:
+			s = SeverityWarning
+		case c = <-loggerError:
+			s = SeverityError
 		}
+		log(c, s)
 	}
 }
 
@@ -106,17 +112,17 @@ func log(content interface{}, severity string) {
 
 // Writes a log entry with severity: info. See log() for more details
 func LogInfo(content interface{}) {
-	log(content, SeverityInfo)
+	loggerInfo <- content
 }
 
 // Writes a log entry with severity: warning. See log() for more details
 func LogWarning(content interface{}) {
-	log(content, SeverityWarning)
+	loggerWarn <- content
 }
 
 // Writes a log entry with severity: error. See log() for more details
 func LogError(content interface{}) {
-	log(content, SeverityError)
+	loggerError <- content
 }
 
 // Sets the application string. This must be done before any log function is

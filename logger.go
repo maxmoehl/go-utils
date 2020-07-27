@@ -51,8 +51,8 @@ func init() {
 }
 
 // This function listens to the three different channels where log messages
-// can be sent. When a message is received the
-//
+// can be sent. When a message is received the message will be logged and
+// if loggingUrl is set the log will be sent there.
 func logger() {
 	for {
 		var (
